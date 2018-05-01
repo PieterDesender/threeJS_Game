@@ -1,56 +1,44 @@
-
+var THREE = require('three');
 
 export default class Game {
   constructor() {
-    this.maxFps = 30;
-    this.lastRender = 0;
-    this.lastUpdate = 0;
-    this.timeStep = 1000 / this.maxFps;
-    this.fps = 0;
-    this.timeSinceLastSecond = 0;
-    this.pauseGame = false;
+    this.renderer = null;
+    this.camera = null;
+    this.scene = null;
+
+    this.material = null;
+    this.mesh = null;
+    this.geometry = null;
   }
 
-  launch(idToChange = "game", config) {
-   
+  launch(idToChange, config) {
+    console.log(THREE);
+    this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+    this.camera.position.z = 1;
+    this.scene = new THREE.Scene();
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer.setClearColor("#000000");
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById(idToChange).appendChild( this.renderer.domElement );
     return this;
   }
 
   startGame() {
-    requestAnimationFrame(this.loop());
+    this.geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+    this.material = new THREE.MeshNormalMaterial();
+
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.scene.add(this.mesh);
+
+    requestAnimationFrame(this.update());
   }
 
-  loop() {
+  update() {
     return timestamp => {
-      requestAnimationFrame(this.loop());
-      if (!this.pauseGame) {
-        let deltaTSeconds = timestamp - this.lastUpdate;
-        this.tick(deltaTSeconds * 0.001);
-        if (this.timeStep <= timestamp - this.lastRender) {
-          this.draw();
-          this.lastRender = timestamp;
-          this.fps++;
-          if ((timestamp - this.timeSinceLastSecond) >= 1000) {
-            console.log(this.fps);
-            this.fps = 0;
-            this.timeSinceLastSecond = timestamp;
-          }
-        }
-      }
-      this.lastUpdate = timestamp;
-    };
+      this.mesh.rotation.x += (0.01);
+      this.mesh.rotation.y += (0.02);
+      this.renderer.render(this.scene, this.camera);
+      requestAnimationFrame(this.update());
+    }
   }
-
-
-
-  tick(deltaTMs) {
-    
-  }
-
-  draw() {
-
-  }
-
-
-
 }
