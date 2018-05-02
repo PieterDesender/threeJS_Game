@@ -11,7 +11,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['./../dist'], {allowExternal:true}),
     new HtmlWebpackPlugin({
-      title: 'napoleonPrizewheel',
+      title: 'threeGame',
       template: './public/assets/html/index.html',
       filename: 'index.html'
     }),
